@@ -11,11 +11,14 @@ ex = re.compile('''"username":"(.*?)"''')
 class RemoteUserLoginHandler(BaseHandler):
 
     def get(self):
+        print("in auth handler")
         data = self.request.headers.get("X-Amzn-Oidc-Data", "")
+        print("got header: data")
         if data == "":
             raise web.HTTPError(401)
         json = base64.b64decode(data).decode()
         user = ex.match(json)
+        print("got user: user")
         if not user:
             raise web.HTTPError(401)
         user = user.groups()[0]
