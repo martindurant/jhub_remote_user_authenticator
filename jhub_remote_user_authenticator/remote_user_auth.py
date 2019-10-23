@@ -5,7 +5,7 @@ import base64
 import re
 from tornado import gen, web
 from traitlets import Unicode
-ex = re.compile('''"username":"(.*?)"''')
+ex = re.compile('''\"username\":\"(.*?)\"''')
 
 
 class RemoteUserLoginHandler(BaseHandler):
@@ -13,15 +13,14 @@ class RemoteUserLoginHandler(BaseHandler):
     def get(self):
         print("in auth handler")
         data = self.request.headers.get("X-Amzn-Oidc-Data", "")
-        print("got header: data")
         if data == "":
             raise web.HTTPError(401)
         json = base64.b64decode(data).decode()
-        user = ex.match(json)
-        print("got user: user")
+        user = ex.findall(json)
+        print("got user", user)
         if not user:
             raise web.HTTPError(401)
-        user = user.groups()[0]
+        user = user[0]
 
         self.set_login_cookie(user)
         next_url = self.get_next_url(user)
