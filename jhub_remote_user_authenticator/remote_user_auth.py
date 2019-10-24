@@ -21,6 +21,7 @@ class RemoteUserLoginHandler(BaseHandler):
         if not user:
             raise web.HTTPError(401)
         user = user[0].decode(errors='ignore')
+        user = self.user_from_username(user)
 
         self.set_login_cookie(user)
         next_url = self.get_next_url(user)
